@@ -1,0 +1,59 @@
+# name: frontend
+name: banquet_booking_app
+description: A Flutter app for booking banquets and venues
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.10.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management
+  provider: ^6.1.1
+
+  # HTTP Client
+  dio: ^5.3.4
+
+  # Form Handling
+  flutter_form_builder: ^10.0.1
+  form_builder_validators: ^11.2.0
+
+  # UI Components
+  cupertino_icons: ^1.0.6
+  flutter_svg: ^2.0.9
+  cached_network_image: ^3.3.0
+
+  # Date Picker
+  flutter_datetime_picker_plus: ^2.1.0
+
+  # File Picker
+  file_picker: ^10.3.3
+  image_picker: ^1.0.4
+
+  # Environment Variables
+  flutter_dotenv: ^6.0.0
+
+  # Utils
+  # intl: ^0.18.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - .env
+    - assets/images/
+
+  # fonts:
+  #   - family: Roboto
+  #     fonts:
+  #       - asset: fonts/Roboto-Regular.ttf
+  #       - asset: fonts/Roboto-Bold.ttf
+  #         weight: 700
