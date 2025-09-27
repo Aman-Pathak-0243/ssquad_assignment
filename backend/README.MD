@@ -95,7 +95,7 @@ src/
 MONGODB_URI=mongodb://localhost:27017/banquet_booking
 PORT=5000
 NODE_ENV=development
-UPLOAD_DIR=uploads
+# UPLOAD_DIR=uploads
 MAX_FILE_SIZE=5000000
 ```
 
