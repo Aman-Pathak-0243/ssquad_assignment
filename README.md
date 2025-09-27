@@ -14,8 +14,8 @@ A complete mobile application for booking banquets and venues, built with Flutte
 ### 1. Clone Repository
 
 ```bash
-git clone <your-repo-url>
-cd banquet-booking-app
+git clone https://github.com/Aman-Pathak-0243/ssquad_assignment.git
+cd ssquad_assignment
 ```
 
 ### 2. Backend Setup
