@@ -12,6 +12,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
   @override
   void initState() {
     super.initState();
@@ -21,40 +24,61 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FA),
       body: SafeArea(
         child: Consumer<AppState>(
           builder: (context, appState, child) {
+            // Filter categories based on search query
+            final filteredCategories = appState.categories
+                .where((cat) =>
+                    cat.name.toLowerCase().contains(_searchQuery.toLowerCase()))
+                .toList();
+
             return Column(
               children: [
-                // Header
+                // HEADER
                 Container(
                   width: double.infinity,
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Color(0xFF2196F3), Color(0xFF1976D2)],
+                      colors: [Color(0xFF42A5F5), Color(0xFF1976D2)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 8,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(24),
+                    ),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(20.0),
+                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 28),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Profile Row
                         Row(
                           children: [
-                            Container(
-                              width: 40,
-                              height: 40,
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
+                            CircleAvatar(
+                              radius: 24,
+                              backgroundColor: Colors.white,
                               child: const Icon(
                                 Icons.person,
-                                color: Color(0xFF2196F3),
+                                color: Color(0xFF1976D2),
+                                size: 28,
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -66,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     'Aman Pathak',
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 18,
+                                      fontSize: 20,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -82,37 +106,54 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
+                                horizontal: 14,
                                 vertical: 6,
                               ),
                               decoration: BoxDecoration(
                                 color: Colors.white.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.3),
+                                ),
                               ),
                               child: const Text(
                                 'Bid left: 3',
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 12,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
+
+                        const SizedBox(height: 20),
+
+                        // Info line
                         const Text(
-                          'You have 3 bids left. Upgrade now to Bid more.',
+                          'You have 3 bids left. Upgrade now to bid more.',
                           style: TextStyle(
                             color: Colors.white70,
-                            fontSize: 14,
+                            fontSize: 15,
                           ),
                         ),
-                        const SizedBox(height: 16),
+
+                        const SizedBox(height: 20),
+
+                        // Search bar
                         Container(
-                          height: 44,
+                          height: 48,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(22),
+                            borderRadius: BorderRadius.circular(30),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 6,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
                           ),
                           child: Row(
                             children: [
@@ -123,10 +164,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                   color: Colors.grey,
                                 ),
                               ),
-                              const Expanded(
+                              Expanded(
                                 child: TextField(
-                                  decoration: InputDecoration(
-                                    hintText: 'Search',
+                                  controller: _searchController,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _searchQuery = value;
+                                    });
+                                  },
+                                  decoration: const InputDecoration(
+                                    hintText: 'Search categories...',
+                                    hintStyle: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 14,
+                                    ),
                                     border: InputBorder.none,
                                     contentPadding: EdgeInsets.symmetric(
                                       horizontal: 16,
@@ -143,26 +194,31 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
 
-                // Categories Section
+                // CATEGORIES SECTION
                 Expanded(
                   child: Container(
-                    color: Colors.white,
+                    width: double.infinity,
+                    padding: const EdgeInsets.only(top: 16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Padding(
-                          padding: EdgeInsets.all(20.0),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 8,
+                          ),
                           child: Text(
                             'Categories',
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: Colors.black87,
                             ),
                           ),
                         ),
                         Expanded(
-                          child: _buildCategoriesContent(appState),
+                          child: _buildCategoriesContent(
+                              appState, filteredCategories),
                         ),
                       ],
                     ),
@@ -176,10 +232,13 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildCategoriesContent(AppState appState) {
+  Widget _buildCategoriesContent(AppState appState, List filteredCategories) {
     if (appState.isLoadingCategories) {
       return const Center(
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator(
+          strokeWidth: 3,
+          valueColor: AlwaysStoppedAnimation(Color(0xFF1976D2)),
+        ),
       );
     }
 
@@ -190,34 +249,44 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             const Icon(
               Icons.error_outline,
-              size: 48,
-              color: Colors.grey,
+              size: 56,
+              color: Colors.redAccent,
             ),
             const SizedBox(height: 16),
             Text(
               'Failed to load categories',
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.grey[600],
+                color: Colors.grey[700],
+                fontWeight: FontWeight.w500,
               ),
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
+            ElevatedButton.icon(
               onPressed: () {
                 appState.clearError();
                 appState.fetchCategories();
               },
-              child: const Text('Retry'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF1976D2),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              ),
+              icon: const Icon(Icons.refresh, size: 18),
+              label: const Text('Retry'),
             ),
           ],
         ),
       );
     }
 
-    if (appState.categories.isEmpty) {
+    if (filteredCategories.isEmpty) {
       return const Center(
         child: Text(
-          'No categories available',
+          'No categories found',
           style: TextStyle(
             fontSize: 16,
             color: Colors.grey,
@@ -227,10 +296,10 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      itemCount: appState.categories.length,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      itemCount: filteredCategories.length,
       itemBuilder: (context, index) {
-        final category = appState.categories[index];
+        final category = filteredCategories[index];
         return Padding(
           padding: const EdgeInsets.only(bottom: 16),
           child: CategoryCard(
@@ -251,16 +320,26 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );
     } else {
-      // Show coming soon dialog for other categories
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text(category.name),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Text(
+            category.name,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           content: const Text('This feature is coming soon!'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
+              child: const Text(
+                'OK',
+                style: TextStyle(color: Color(0xFF1976D2)),
+              ),
             ),
           ],
         ),

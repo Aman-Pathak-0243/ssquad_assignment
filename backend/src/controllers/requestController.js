@@ -46,7 +46,9 @@ const getCuisines = async (req, res, next) => {
       {
         name: "Mexican",
         image:
-          "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=300&h=200&fit=crop",
+          "https://images.unsplash.com/photo-1737210235283-7675f83efc59?q=80&w=1587&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+
+        // "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=300&h=200&fit=crop",
       },
     ];
 

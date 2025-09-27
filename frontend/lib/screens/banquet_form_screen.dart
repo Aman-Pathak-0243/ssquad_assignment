@@ -56,10 +56,16 @@ class _BanquetFormScreenState extends State<BanquetFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF1976D2), // Bluish background
       appBar: AppBar(
-        title: const Text('Banquets & Venues'),
+        title: const Text(
+          'Banquets & Venues',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: const Color(0xFF1976D2),
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -70,49 +76,63 @@ class _BanquetFormScreenState extends State<BanquetFormScreen> {
             child: Column(
               children: [
                 Expanded(
-                  child: SingleChildScrollView(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Tell Us Your Venue Requirements',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
+                  child: Container(
+                    margin: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
                         ),
-                        const SizedBox(height: 24),
-
-                        _buildEventTypeField(appState),
-                        const SizedBox(height: 16),
-
-                        _buildLocationFields(appState),
-                        const SizedBox(height: 16),
-
-                        _buildEventDatesField(),
-                        const SizedBox(height: 16),
-
-                        _buildNumberOfAdultsField(),
-                        const SizedBox(height: 16),
-
-                        _buildCateringPreferenceField(),
-                        const SizedBox(height: 16),
-
-                        _buildCuisineSelectionField(appState),
-                        const SizedBox(height: 16),
-
-                        _buildBudgetField(),
-                        const SizedBox(height: 16),
-
-                        _buildGetOfferWithinField(),
-                        const SizedBox(height: 16),
-
-                        _buildNotesField(),
-                        const SizedBox(height: 100), // Extra space for FAB
                       ],
+                    ),
+                    child: SingleChildScrollView(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Tell Us Your Venue Requirements',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+
+                          _buildEventTypeField(appState),
+                          const SizedBox(height: 16),
+
+                          _buildLocationFields(appState),
+                          const SizedBox(height: 16),
+
+                          _buildEventDatesField(),
+                          const SizedBox(height: 16),
+
+                          _buildNumberOfAdultsField(),
+                          const SizedBox(height: 16),
+
+                          _buildCateringPreferenceField(),
+                          const SizedBox(height: 16),
+
+                          _buildCuisineSelectionField(appState),
+                          const SizedBox(height: 16),
+
+                          _buildBudgetField(),
+                          const SizedBox(height: 16),
+
+                          _buildGetOfferWithinField(),
+                          const SizedBox(height: 16),
+
+                          _buildNotesField(),
+                          const SizedBox(height: 80), // Extra space for FAB
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -133,8 +153,9 @@ class _BanquetFormScreenState extends State<BanquetFormScreen> {
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(15), // More rounded
                 ),
+                elevation: 4,
               ),
               child: appState.isSubmittingRequest
                   ? const Row(
@@ -186,7 +207,7 @@ class _BanquetFormScreenState extends State<BanquetFormScreen> {
           decoration: InputDecoration(
             hintText: 'Select event type',
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
             ),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -228,7 +249,7 @@ class _BanquetFormScreenState extends State<BanquetFormScreen> {
           decoration: InputDecoration(
             hintText: 'Select country',
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
             ),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -268,21 +289,23 @@ class _BanquetFormScreenState extends State<BanquetFormScreen> {
         DropdownButtonFormField<Location>(
           value: _selectedState,
           decoration: InputDecoration(
-            hintText: 'Select state',
+            hintText:
+                appState.isLoadingStates ? 'Loading states...' : 'Select state',
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
             ),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
-          validator: (value) => value == null ? 'Please select a state' : null,
-          items: appState.states.map((state) {
-            return DropdownMenuItem<Location>(
-              value: state,
-              child: Text(state.name),
-            );
-          }).toList(),
-          onChanged: _selectedCountry == null
+          items: appState.states.isEmpty
+              ? []
+              : appState.states.map((state) {
+                  return DropdownMenuItem<Location>(
+                    value: state,
+                    child: Text(state.name),
+                  );
+                }).toList(),
+          onChanged: (appState.states.isEmpty)
               ? null
               : (value) {
                   setState(() {
@@ -312,7 +335,7 @@ class _BanquetFormScreenState extends State<BanquetFormScreen> {
           decoration: InputDecoration(
             hintText: 'Select city',
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
             ),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -354,7 +377,7 @@ class _BanquetFormScreenState extends State<BanquetFormScreen> {
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey[300]!),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -397,7 +420,7 @@ class _BanquetFormScreenState extends State<BanquetFormScreen> {
                       const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   decoration: BoxDecoration(
                     color: Colors.blue[50],
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.blue[200]!),
                   ),
                   child: Row(
@@ -451,7 +474,7 @@ class _BanquetFormScreenState extends State<BanquetFormScreen> {
           decoration: InputDecoration(
             hintText: 'Enter number of adults',
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
             ),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -495,13 +518,16 @@ class _BanquetFormScreenState extends State<BanquetFormScreen> {
                         : Colors.grey[300]!,
                     width: 2,
                   ),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(12),
                   color: _cateringPreference == 'veg'
                       ? Colors.green[50]
                       : Colors.white,
                 ),
                 child: RadioListTile<String>(
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                   title: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
                         width: 12,
@@ -511,8 +537,13 @@ class _BanquetFormScreenState extends State<BanquetFormScreen> {
                           shape: BoxShape.circle,
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      const Text('Veg'),
+                      const SizedBox(width: 6),
+                      const Flexible(
+                        child: Text(
+                          'Veg',
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                     ],
                   ),
                   value: 'veg',
@@ -536,13 +567,16 @@ class _BanquetFormScreenState extends State<BanquetFormScreen> {
                         : Colors.grey[300]!,
                     width: 2,
                   ),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(12),
                   color: _cateringPreference == 'non-veg'
                       ? Colors.red[50]
                       : Colors.white,
                 ),
                 child: RadioListTile<String>(
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                   title: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
                         width: 12,
@@ -552,8 +586,13 @@ class _BanquetFormScreenState extends State<BanquetFormScreen> {
                           shape: BoxShape.circle,
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      const Text('Non-veg'),
+                      const SizedBox(width: 6),
+                      const Flexible(
+                        child: Text(
+                          'Non-veg',
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                     ],
                   ),
                   value: 'non-veg',
@@ -622,8 +661,8 @@ class _BanquetFormScreenState extends State<BanquetFormScreen> {
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey[300]!),
                 borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(8),
-                  bottomLeft: Radius.circular(8),
+                  topLeft: Radius.circular(12),
+                  bottomLeft: Radius.circular(12),
                 ),
                 color: Colors.grey[100],
               ),
@@ -643,8 +682,8 @@ class _BanquetFormScreenState extends State<BanquetFormScreen> {
                   hintText: 'Enter budget amount',
                   border: OutlineInputBorder(
                     borderRadius: const BorderRadius.only(
-                      topRight: Radius.circular(8),
-                      bottomRight: Radius.circular(8),
+                      topRight: Radius.circular(12),
+                      bottomRight: Radius.circular(12),
                     ),
                   ),
                   contentPadding:
@@ -685,7 +724,7 @@ class _BanquetFormScreenState extends State<BanquetFormScreen> {
           value: _getOfferWithin,
           decoration: InputDecoration(
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
             ),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -735,7 +774,7 @@ class _BanquetFormScreenState extends State<BanquetFormScreen> {
           decoration: InputDecoration(
             hintText: 'Any special requirements or additional information...',
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
             ),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

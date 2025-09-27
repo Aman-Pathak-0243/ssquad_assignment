@@ -13,7 +13,6 @@ const seedDatabase = async () => {
     // Clear existing data
     await Category.deleteMany({});
     await Location.deleteMany({});
-
     console.log("🗑️  Cleared existing data");
 
     // Seed Categories
@@ -43,7 +42,6 @@ const seedDatabase = async () => {
         order: 3,
       },
     ];
-
     const savedCategories = await Category.insertMany(categories);
     console.log(`✅ Seeded ${savedCategories.length} categories`);
 
@@ -54,60 +52,129 @@ const seedDatabase = async () => {
       { name: "Japan", type: "country", code: "JP" },
       { name: "Russia", type: "country", code: "RU" },
     ];
-
     const savedCountries = await Location.insertMany(countries);
     console.log(`✅ Seeded ${savedCountries.length} countries`);
 
-    // Find India for states
-    const india = savedCountries.find((c) => c.name === "India");
-    const china = savedCountries.find((c) => c.name === "China");
+    // Seed States for all countries
+    const countryMap = {};
+    savedCountries.forEach((c) => (countryMap[c.name] = c));
 
-    // Seed Indian States
-    const indianStates = [
-      { name: "Maharashtra", type: "state", parentId: india._id, code: "MH" },
-      { name: "Delhi", type: "state", parentId: india._id, code: "DL" },
-      { name: "Karnataka", type: "state", parentId: india._id, code: "KA" },
-      { name: "Tamil Nadu", type: "state", parentId: india._id, code: "TN" },
-      { name: "Gujarat", type: "state", parentId: india._id, code: "GJ" },
+    const states = [
+      // India
+      {
+        name: "Maharashtra",
+        type: "state",
+        parentId: countryMap["India"]._id,
+        code: "MH",
+      },
+      {
+        name: "Delhi",
+        type: "state",
+        parentId: countryMap["India"]._id,
+        code: "DL",
+      },
+      {
+        name: "Karnataka",
+        type: "state",
+        parentId: countryMap["India"]._id,
+        code: "KA",
+      },
+      {
+        name: "Tamil Nadu",
+        type: "state",
+        parentId: countryMap["India"]._id,
+        code: "TN",
+      },
+      {
+        name: "Gujarat",
+        type: "state",
+        parentId: countryMap["India"]._id,
+        code: "GJ",
+      },
+
+      // China
+      {
+        name: "Beijing",
+        type: "state",
+        parentId: countryMap["China"]._id,
+        code: "BJ",
+      },
+      {
+        name: "Shanghai",
+        type: "state",
+        parentId: countryMap["China"]._id,
+        code: "SH",
+      },
+      {
+        name: "Guangdong",
+        type: "state",
+        parentId: countryMap["China"]._id,
+        code: "GD",
+      },
+
+      // Japan
+      {
+        name: "Tokyo",
+        type: "state",
+        parentId: countryMap["Japan"]._id,
+        code: "TK",
+      },
+      {
+        name: "Osaka",
+        type: "state",
+        parentId: countryMap["Japan"]._id,
+        code: "OS",
+      },
+
+      // Russia
+      {
+        name: "Moscow",
+        type: "state",
+        parentId: countryMap["Russia"]._id,
+        code: "MS",
+      },
+      {
+        name: "Saint Petersburg",
+        type: "state",
+        parentId: countryMap["Russia"]._id,
+        code: "SP",
+      },
     ];
 
-    // Seed Chinese States/Provinces
-    const chineseStates = [
-      { name: "Beijing", type: "state", parentId: china._id, code: "BJ" },
-      { name: "Shanghai", type: "state", parentId: china._id, code: "SH" },
-      { name: "Guangdong", type: "state", parentId: china._id, code: "GD" },
-    ];
-
-    const savedStates = await Location.insertMany([
-      ...indianStates,
-      ...chineseStates,
-    ]);
+    const savedStates = await Location.insertMany(states);
     console.log(`✅ Seeded ${savedStates.length} states`);
 
-    // Find specific states for cities
-    const maharashtra = savedStates.find((s) => s.name === "Maharashtra");
-    const delhi = savedStates.find((s) => s.name === "Delhi");
-    const karnataka = savedStates.find((s) => s.name === "Karnataka");
-    const beijing = savedStates.find((s) => s.name === "Beijing");
+    // Map states by name for easy city seeding
+    const stateMap = {};
+    savedStates.forEach((s) => (stateMap[s.name] = s));
 
-    // Seed Cities
+    // Seed Cities for all states
     const cities = [
-      // Maharashtra cities
-      { name: "Mumbai", type: "city", parentId: maharashtra._id },
-      { name: "Pune", type: "city", parentId: maharashtra._id },
-      { name: "Nagpur", type: "city", parentId: maharashtra._id },
+      // India
+      { name: "Mumbai", type: "city", parentId: stateMap["Maharashtra"]._id },
+      { name: "Pune", type: "city", parentId: stateMap["Maharashtra"]._id },
+      { name: "New Delhi", type: "city", parentId: stateMap["Delhi"]._id },
+      { name: "Bangalore", type: "city", parentId: stateMap["Karnataka"]._id },
+      { name: "Chennai", type: "city", parentId: stateMap["Tamil Nadu"]._id },
+      { name: "Ahmedabad", type: "city", parentId: stateMap["Gujarat"]._id },
 
-      // Delhi cities
-      { name: "New Delhi", type: "city", parentId: delhi._id },
-      { name: "Dwarka", type: "city", parentId: delhi._id },
+      // China
+      { name: "Chaoyang", type: "city", parentId: stateMap["Beijing"]._id },
+      { name: "Haidian", type: "city", parentId: stateMap["Beijing"]._id },
+      { name: "Pudong", type: "city", parentId: stateMap["Shanghai"]._id },
+      { name: "Guangzhou", type: "city", parentId: stateMap["Guangdong"]._id },
 
-      // Karnataka cities
-      { name: "Bangalore", type: "city", parentId: karnataka._id },
-      { name: "Mysore", type: "city", parentId: karnataka._id },
+      // Japan
+      { name: "Shinjuku", type: "city", parentId: stateMap["Tokyo"]._id },
+      { name: "Nishi", type: "city", parentId: stateMap["Osaka"]._id },
 
-      // Beijing cities
-      { name: "Chaoyang", type: "city", parentId: beijing._id },
-      { name: "Haidian", type: "city", parentId: beijing._id },
+      // Russia
+      { name: "Moscow City", type: "city", parentId: stateMap["Moscow"]._id },
+      {
+        name: "Saint Petersburg City",
+        type: "city",
+        parentId: stateMap["Saint Petersburg"]._id,
+      },
     ];
 
     const savedCities = await Location.insertMany(cities);
